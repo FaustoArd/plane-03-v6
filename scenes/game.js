@@ -26,7 +26,9 @@ export default class Game extends Phaser.Scene {
     create() {
         this.width = this.sys.game.config.width;
         this.height = this.sys.game.config.height;
-        this.add.image(400, 300, 'sky');
+        this.center_width = this.width /2;
+        this.center_height = this.height /2;
+       // this.add.image(400, 300, 'sky');
      
         this.platforms = this.physics.add.staticGroup();
         this.platforms.create(400,568, 'ground').setScale(2).refreshBody();
@@ -35,6 +37,7 @@ export default class Game extends Phaser.Scene {
         this.platforms.create(750,220,'ground');
 
        this.player =this.physics.add.sprite(100,450, 'dude');
+       this.cameras.main.setBackgroundColor(0x87ceeb);
        this.cameras.main.startFollow(this.player);
        this.player.setBounce(0.2);
        this.player.setCollideWorldBounds(true);
