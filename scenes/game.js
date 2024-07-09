@@ -1,3 +1,4 @@
+import Player from '../gameobjects/player';
 export default class Game extends Phaser.Scene {
     constructor() {
         super("game");
@@ -35,35 +36,35 @@ export default class Game extends Phaser.Scene {
         this.platforms.create(600,400,'ground');
         this.platforms.create(50,250,'ground');
         this.platforms.create(750,220,'ground');
-
-       this.player =this.physics.add.sprite(100,450, 'dude');
+        this.player = new Player(this,this.center_width,this.center_height);
+    //    this.player =this.physics.add.sprite(100,450, 'dude');
        this.cameras.main.setBackgroundColor(0x87ceeb);
        this.cameras.main.startFollow(this.player);
-       this.player.setBounce(0.2);
-       this.player.setCollideWorldBounds(true);
-       this.player.setGravityY(300);
+    //    this.player.setBounce(0.2);
+    //    this.player.setCollideWorldBounds(true);
+    //    this.player.setGravityY(300);
        this.physics.add.collider(this.player, this.platforms);
-       this.cursors = this.input.keyboard.createCursorKeys();
+        this.cursor = this.input.keyboard.createCursorKeys();
 
-       this.anims.create({
-        key: 'left',
-        frames: this.anims.generateFrameNumbers('dude', {start: 0, end: 3}),
-        frameRate: 10,
-        repeat: -1
-       });
+    //    this.anims.create({
+    //     key: 'left',
+    //     frames: this.anims.generateFrameNumbers('dude', {start: 0, end: 3}),
+    //     frameRate: 10,
+    //     repeat: -1
+    //    });
 
-       this.anims.create({
-        key: 'turn',
-        frames: [{key: 'dude', frame: 4 }],
-        frameRate: 20
-       });
+    //    this.anims.create({
+    //     key: 'turn',
+    //     frames: [{key: 'dude', frame: 4 }],
+    //     frameRate: 20
+    //    });
 
-       this.anims.create({
-        key: 'right',
-        frames: this.anims.generateFrameNumbers('dude', { start: 5, end: 8 }),
-        frameRate: 10,
-        repeat: -1
-       });
+    //    this.anims.create({
+    //     key: 'right',
+    //     frames: this.anims.generateFrameNumbers('dude', { start: 5, end: 8 }),
+    //     frameRate: 10,
+    //     repeat: -1
+    //    });
 
        this.stars = this.physics.add.group({
         key: 'star',
@@ -95,8 +96,7 @@ export default class Game extends Phaser.Scene {
           
        }
        this.scoreText = this.add.text(16,16,'score: 0', { fontSize: '32px', fill: '#DAED38 '});
-
-       this.bombs = this. physics.add.group();
+        this.bombs = this. physics.add.group();
        this.physics.add.collider(this.bombs,this.platforms);
        this.physics.add.collider(this.player,this.bombs,this.hitBomb,null,this);
 
@@ -111,19 +111,19 @@ export default class Game extends Phaser.Scene {
        }
 
     update() {
-        if(this.cursors.left.isDown){
-            this.player.setVelocityX(-160);
+        if(this.cursor.left.isDown){
+            this.player.x += -160;
             this.player.anims.play('left', true);
-        }else if(this.cursors.right.isDown){
-            this.player.setVelocityX(160);
+        }else if(this.cursor.right.isDown){
+            this.player.x += 160;
             this.player.anims.play('right', true);
         }
         else{
-            this.player.setVelocityX(0);
+            this.player.x = 0;
             this.player.anims.play('turn');
         }
-        if(this.cursors.up.isDown && this.player.body.touching.down){
-            this.player.setVelocityY(-600);
+        if(this.cursor.up.isDown && this.player.body.touching.down){
+            this.player.y += -600;
         }
     }
 
