@@ -33,7 +33,7 @@ class Cloud extends Phaser.GameObjects.Rectangle{
     init(){
         this.scene.tweens.add({
             targets : this,
-            x: {from: 1920, to: -100},
+            x: {from: 1366, to: -100},
             duration : 1000 / this.scale,
             onComplete: () => {
                 this.destroy();
