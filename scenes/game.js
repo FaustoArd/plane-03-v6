@@ -1,3 +1,5 @@
+import Generator from '../gameobjects/generator';
+
 const speedDown = 200;
 
 export default class Game extends Phaser.Scene {
@@ -37,6 +39,7 @@ export default class Game extends Phaser.Scene {
 
         this.platforms = this.physics.add.staticGroup();
         this.platforms.create(400, 568, 'ground').setScale(3).refreshBody();
+        this.generator = new Generator(this);
         // this.platforms.create(600, 400, 'ground');
         // this.platforms.create(50, 250, 'ground');
         // this.platforms.create(750, 220, 'ground');
@@ -87,7 +90,7 @@ export default class Game extends Phaser.Scene {
           } else if (this.cursor.right.isDown) {
             this.player.setVelocityX(this.playerSpeed)
           }else if (this.cursor.left.isDown){
-            this.player.setVelocityX(-this.playerSpeed)
+            this.player.setVelocityX(0)
           }
           else {
             this.player.setVelocityY(0);
