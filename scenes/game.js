@@ -3,6 +3,7 @@ import Generator from '../gameobjects/generator';
 const speedDown = 200;
 const spawnRange = [100,350];
 const platformSizeRange = [50,250];
+const playerStartPosition = 200;
 
 export default class Game extends Phaser.Scene {
     reverseEnabled;
@@ -38,6 +39,7 @@ export default class Game extends Phaser.Scene {
         this.center_width = this.width / 2;
         this.center_height = this.height / 2;
         this.platformGroup = this.add.group({
+
           removeCallback: function(platform){
             platform.scene.platformPool.add(platform)
           }
@@ -67,6 +69,7 @@ export default class Game extends Phaser.Scene {
         this.platformPool.remove(platform);
       }else{
         platform = this.physics.add.sprite(posX, this.height * 0.8, "platform");
+       
         platform.setImmovable(true);
         platform.setVelocityX(speedDown * -1);
         this.platformGroup.add(platform);
@@ -76,7 +79,8 @@ export default class Game extends Phaser.Scene {
     }
 
     setPlayer(){
-        this.player = this.physics.add.sprite(this.center_width, this.center_height, 'ship').setOrigin(0.0);
+       // this.player = this.physics.add.sprite(this.center_width, this.center_height, 'ship').setOrigin(0.0);
+        this.player = this.physics.add.sprite(playerStartPosition, this.height / 2, "ship");
         this.cameras.main.startFollow(this.player);
         this.player.setBounce(0.2);
         this.player.setCollideWorldBounds(true);
@@ -108,19 +112,24 @@ export default class Game extends Phaser.Scene {
     }
 
     update() {
+      this.reciclePlatform();
         this.player.anims.play('left', true);
-        this.reciclePlatform();
+       //this.player.setVelocityX(this.playerStartPosition)
+      // this.player.x = this.playerStartPosition;
+      
         if (this.cursor.up.isDown) {
-            this.player.setVelocityY(-this.playerSpeed)
+         // this.player.setVelocityY(0)
+            this.player.anims.play('up', true);
           } else if (this.cursor.down.isDown) {
-            this.player.setVelocityY(this.playerSpeed);
+            //this.player.setVelocityX(0);
+            this.player.anims.play('down', true);
           } else if (this.cursor.right.isDown) {
-            this.player.setVelocityX(this.playerSpeed)
+           // this.player.setVelocityX(this.playerSpeed)
           }else if (this.cursor.left.isDown){
-            this.player.setVelocityX(0)
+           // this.player.setVelocityX(0)
           }
           else {
-            this.player.setVelocityY(0);
+           // this.player.setVelocityY(0);
           }
           if (this.cursor.space.isDown) {
             console.log("SPACE!!!!");

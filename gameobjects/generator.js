@@ -11,7 +11,7 @@ export default class Generator{
     generateCloud(){
       new Cloud(this.scene);
       this.scene.time.delayedCall(
-        Phaser.Math.Between(200,500),
+        Phaser.Math.Between(100,200),
         ()=> this.generateCloud(),
         null,
         this
@@ -33,8 +33,8 @@ class Cloud extends Phaser.GameObjects.Rectangle{
     init(){
         this.scene.tweens.add({
             targets : this,
-            x: {from: 1366, to: -100},
-            duration : 2000 / this.scale,
+            x: {from: 1920, to: -100},
+            duration : 1000 / this.scale,
             onComplete: () => {
                 this.destroy();
             } ,
