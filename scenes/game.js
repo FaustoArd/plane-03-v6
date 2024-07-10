@@ -1,6 +1,8 @@
 import Generator from '../gameobjects/generator';
 
 const speedDown = 200;
+const spawnRange = [100,350];
+const platformSizeRange = [50,250];
 
 export default class Game extends Phaser.Scene {
     reverseEnabled;
@@ -21,7 +23,7 @@ export default class Game extends Phaser.Scene {
 
     preload() {
         this.load.image('sky', 'assets/background_01.png');
-        this.load.image('ground', 'assets/platform.png');
+        this.load.image('platform', 'assets/platform.png');
         this.load.image('star', 'assets/star.png');
         this.load.image('bomb', 'assets/bomb.png');
         this.load.spritesheet('ship',
@@ -35,18 +37,42 @@ export default class Game extends Phaser.Scene {
         this.height = this.sys.game.config.height;
         this.center_width = this.width / 2;
         this.center_height = this.height / 2;
-        // this.add.image(400, 300, 'sky');
-
-        this.platforms = this.physics.add.staticGroup();
-        this.platforms.create(400, 568, 'ground').setScale(3).refreshBody();
+        this.platformGroup = this.add.group({
+          removeCallback: function(platform){
+            platform.scene.platformPool.add(platform)
+          }
+        });
+        this.platformPool = this.add.group({
+          removeCallback: function(platform){
+            platform.scene.platformGroup.add(platform);
+          }
+        });
+        this.addPlatform(this.width,this.height /2)
         this.generator = new Generator(this);
-        // this.platforms.create(600, 400, 'ground');
-        // this.platforms.create(50, 250, 'ground');
-        // this.platforms.create(750, 220, 'ground');
+      
         this.cameras.main.setBackgroundColor(0x0000);
        this.setPlayer();
+       this.physics.add.collider(this.player, this.platformGroup);
        this.cursor = this.input.keyboard.createCursorKeys();
 
+    }
+
+    addPlatform(platformWidth, posX){
+      let platform;
+      if(this.platformPool.getLength()){
+        platform = this.platformPool.getFirst();
+        platform.x = posX;
+        platform.active = true;
+        platform.visible = true;
+        this.platformPool.remove(platform);
+      }else{
+        platform = this.physics.add.sprite(posX, this.height * 0.8, "platform");
+        platform.setImmovable(true);
+        platform.setVelocityX(speedDown * -1);
+        this.platformGroup.add(platform);
+      }
+      platform.displayWidth = platformWidth;
+      this.nextPlatformDistance= Phaser.Math.Between(spawnRange[0],spawnRange[1]);
     }
 
     setPlayer(){
@@ -83,6 +109,7 @@ export default class Game extends Phaser.Scene {
 
     update() {
         this.player.anims.play('left', true);
+        this.reciclePlatform();
         if (this.cursor.up.isDown) {
             this.player.setVelocityY(-this.playerSpeed)
           } else if (this.cursor.down.isDown) {
@@ -99,6 +126,24 @@ export default class Game extends Phaser.Scene {
             console.log("SPACE!!!!");
           }
 
+    }
+
+    reciclePlatform(){
+       // recycling platforms
+      let minDistance = this.width;
+      this.platformGroup.getChildren().forEach(function(platform){
+        let platformDistance = this.width -platform.x - platform.displayWidth /2;
+        minDistance = Math.min(minDistance, platformDistance);
+        if(platform.x < - platform.displayWidth /2){
+          this.platformGroup.killAndHide(platform);
+          this.platformGroup.remove(platform);
+        }
+      },this);
+        // adding new platforms
+      if(minDistance < this.nextPlatformDistance){
+        var nexPlatformWidth = Phaser.Math.Between(platformSizeRange[0],platformSizeRange[1]);
+        this.addPlatform(nexPlatformWidth, this.width + nexPlatformWidth /2);
+      }
     }
 
 
